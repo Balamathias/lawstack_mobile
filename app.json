@@ -35,7 +35,7 @@
           "backgroundColor": "#ffffff",
           "dark": {
             "image": "./assets/images/logo.png",
-            "backgroundColor": "#111"
+            "backgroundColor": "#ffffff"
           }
         }
       ]
