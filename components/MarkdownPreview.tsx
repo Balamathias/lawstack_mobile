@@ -92,6 +92,7 @@ const markdownStyles = StyleSheet.create({
         marginBottom: 16,
         fontStyle: 'italic',
         color: colors.secondaryText,
+        backgroundColor: colorScheme === 'dark' ? colors.secondaryBackground : colors.secondaryBackground,
     },
     code_inline: {
         fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
@@ -109,6 +110,8 @@ const markdownStyles = StyleSheet.create({
         borderRadius: 8,
         borderWidth: 1,
         borderColor: colors.border,
+        color: colors.text,
+        overflow: 'scroll',
     },
     fence: {
         fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',

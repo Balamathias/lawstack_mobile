@@ -189,7 +189,7 @@ const FeatureItem = React.memo(({
       style={[
         styles.cardContainer, 
         rCardStyle,
-        { width: cardWidth, marginHorizontal: cardSpacing / 2 }
+        { width: cardWidth,  }
       ]}
     >
       <Pressable 

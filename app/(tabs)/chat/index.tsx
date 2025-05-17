@@ -36,6 +36,14 @@ const ChatScreen = () => {
     })
   }
 
+  if (isLoadingUser || isLoadingChats) {
+    return (
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]} className="flex-1">
+        <ActivityIndicator color={colors.primary} size="large" />
+      </View>
+    )
+  }
+
   if (!user?.data) {
     return (
       <View className="flex-1 items-center justify-center p-6 bg-white dark:bg-[#111]">
@@ -135,11 +143,7 @@ const ChatScreen = () => {
           </TouchableOpacity>
         </View>
         
-        {isLoadingChats ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator color={colors.primary} size="large" />
-          </View>
-        ) : Number(chatData?.data?.length) > 0 ? (
+        {Number(chatData?.data?.length) > 0 ? (
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}

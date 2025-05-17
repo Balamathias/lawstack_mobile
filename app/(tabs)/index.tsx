@@ -15,6 +15,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { MaterialIcons } from '@expo/vector-icons';
 import { User } from '@/@types/db';
+import { RefreshControl } from 'react-native';
+import Loader from '@/components/Loader';
 
 
 const mockUser: User | null = null;
@@ -27,7 +29,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { data: user, isPending } = useUser();
+  const { data: user, isPending, refetch } = useUser();
   const colors = Colors[isDark ? 'dark' : 'light'];
   const currentUser = user?.data;
 
@@ -73,6 +75,12 @@ export default function HomeScreen() {
     buttonScale.value = withTiming(1, { duration: 150 });
   }, []);
 
+  if (isPending) {
+    return (
+      <Loader />
+    );
+  }
+
   return (
     <View
       style={[
@@ -88,6 +96,15 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         bounces={true}
+        refreshControl={
+          <RefreshControl
+            refreshing={isPending}
+            onRefresh={refetch}
+            tintColor={colors.primary}
+            progressBackgroundColor={colors.background}
+            colors={[colors.primary, '#44d7f8', '#4c8bf8']}
+          />
+        }
       >
         <View style={styles.headerContainer}>
 
