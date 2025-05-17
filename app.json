@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "lawstack",
-    "slug": "lawstack",
+    "slug": "lawstack_mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
