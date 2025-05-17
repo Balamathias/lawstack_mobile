@@ -1,6 +1,5 @@
-import { View, Text } from 'react-native'
-import React from 'react'
 import { Stack } from 'expo-router'
+import React from 'react'
 
 const Layout = () => {
   return (
@@ -14,6 +13,13 @@ const Layout = () => {
 
       <Stack.Screen
         name='register'
+        options={{
+          headerShown: false,
+        }}
+      />
+      
+      <Stack.Screen
+        name='verify-otp'
         options={{
           headerShown: false,
         }}

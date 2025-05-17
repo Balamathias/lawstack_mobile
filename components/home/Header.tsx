@@ -20,7 +20,7 @@ export const Header: React.FC<Props> = ({ user }) => {
   
   // Get user initials for avatar placeholder
   const getUserInitials = () => {
-    if (!user) return "?";
+    if (!user) return "G";
     if (user.first_name && user.last_name) {
       return `${user.first_name[0]}${user.last_name[0]}`.toUpperCase();
     }
@@ -47,11 +47,11 @@ export const Header: React.FC<Props> = ({ user }) => {
               ]}
             >
               <View style={styles.logoContainer}>
-                <View style={[
+                {/* <View style={[
                   styles.logoBackground,
                 ]}>
                   <MaterialIcons name="balance" size={20} color={isDark ? '#fff' : Colors.light.primary} />
-                </View>
+                </View> */}
                 <Text style={[
                   styles.logoText,
                   { color: isDark ? Colors.dark.text : Colors.light.text }

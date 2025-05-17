@@ -7,7 +7,7 @@ import { Colors } from '@/constants/Colors';
 
 const ChatDetail = () => {
   const { chat_id } = useLocalSearchParams();
-  const { data: messages, isPending, refetch } = useChatMessages(chat_id as string, { tool_call: false })
+  const { data: messages, isPending, refetch } = useChatMessages(chat_id as string, { tool_call: false, page_size: 500 })
   const { data: chat, isPending: isChatPending, refetch: refetchChat } = useGetChat(chat_id as string)
 
     if (isPending || isChatPending) {

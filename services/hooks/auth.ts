@@ -12,16 +12,13 @@ export const useRegister = () => useMutation({
   mutationFn: async ({...data}: { email: string, username?: string, password: string}) => {
     const response = await register({...data});
 
-    await setItem(STORAGE_KEYS.AUTH_TOKEN, response?.data?.data?.access_token);
-    await setItem(STORAGE_KEYS.REFRESH_TOKEN, response?.data?.data?.refresh_token);
+    if (!response.error) {
+      await setItem(STORAGE_KEYS.AUTH_TOKEN, response?.data?.data?.access_token);
+      await setItem(STORAGE_KEYS.REFRESH_TOKEN, response?.data?.data?.refresh_token);
+    }
 
     return response;
-  },
-    onSuccess: (data) => {
-        if (data.error) {
-            throw new Error(data.message)
-        }
-    }
+  }
 })
 
 export const useUser = () => useQuery({
@@ -48,8 +45,6 @@ export const useLogin = () => useMutation({
         await setItem(STORAGE_KEYS.AUTH_TOKEN, response?.data?.access);
         await setItem(STORAGE_KEYS.REFRESH_TOKEN, response?.data?.refresh);
     }
-
-    console.log('Login response:', response);
 
     return response;
   },

@@ -66,23 +66,49 @@ export function WelcomeSection({
           </Text>
         </Animated.View>
 
-        <Animated.View style={[styles.buttonContainer, buttonAnimStyle]}>
-          <TouchableOpacity
-            onPress={() => router.push('/chat')}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-            style={[styles.button, { overflow: 'hidden' }]}
-          >
-            <LinearGradient
-              colors={['#10B981', '#059669']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={StyleSheet.absoluteFill}
-            />
-            <MaterialIcons name="chat" size={20} color="white" style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>Start Conversation</Text>
-          </TouchableOpacity>
-        </Animated.View>
+        {currentUser ? (
+          <Animated.View style={[styles.buttonContainer, buttonAnimStyle]}>
+            <TouchableOpacity
+              onPress={() => router.push('/chat')}
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
+              style={[styles.button, { overflow: 'hidden' }]}
+            >
+              <LinearGradient
+                colors={['#10B981', '#059669']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <MaterialIcons name="chat" size={20} color="white" style={styles.buttonIcon} />
+              <Text style={styles.buttonText}>Start Conversation</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        ) : (
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              onPress={() => router.push('/login')}
+              style={[styles.button, { marginBottom: SPACING.md, overflow: 'hidden' }]}
+            >
+              <LinearGradient
+                colors={['#10B981', '#059669']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <MaterialIcons name="login" size={20} color="white" style={styles.buttonIcon} />
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => router.push('/register')}
+              style={[styles.button, { backgroundColor: colors.secondaryBackground, borderWidth: 1, borderColor: colors.primary }]}
+            >
+              <MaterialIcons name="person-add" size={20} color={colors.primary} style={styles.buttonIcon} />
+              <Text style={[styles.buttonText, { color: colors.primary }]}>Register</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       <View style={styles.cardContainer}>

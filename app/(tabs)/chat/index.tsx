@@ -11,12 +11,15 @@ import { useColorScheme } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import MaskedView from '@react-native-masked-view/masked-view';
 import { RefreshControl } from 'react-native'
+import { useUser } from '@/services/hooks/auth'
 
 const ChatScreen = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const { mutate: createChat, isPending: isCreatingChat } = useCreateChat();
   const { data: chatData, isLoading: isLoadingChats, refetch } = useGetChats();
+
+  const { data: user, isPending: isLoadingUser } = useUser();
 
   const handleCreateChat = () => {
     createChat({
@@ -31,6 +34,30 @@ const ChatScreen = () => {
         console.error(error)
       }
     })
+  }
+
+  if (!user?.data) {
+    return (
+      <View className="flex-1 items-center justify-center p-6 bg-white dark:bg-[#111]">
+        <View className="items-center max-w-sm">
+          <MaterialIcons name="lock" size={64} color={colors.primary} />
+          <Text className="text-2xl font-bold mt-6 text-center text-gray-800 dark:text-gray-100">
+            Sign in to access your conversations
+          </Text>
+          <Text className="text-center mt-2 mb-6 text-gray-600 dark:text-gray-400">
+            Please login to view your chat history and start new conversations
+          </Text>
+          <TouchableOpacity 
+            onPress={() => router.push('/login')} 
+            className="w-full rounded-xl py-4 bg-emerald-500 shadow-md px-6"
+          >
+            <Text className="text-white text-center font-medium text-lg">
+              Go to Login
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
   }
 
   const renderChatItem = ({ item }: { item: Chat }) => {
@@ -129,12 +156,23 @@ const ChatScreen = () => {
             }
           />
         ) : (
-          <View style={styles.emptyState}>
+          <ScrollView 
+            style={styles.emptyState} 
+            className='flex-1' 
+            contentContainerStyle={{ paddingBottom: 20 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={isLoadingChats}
+                onRefresh={refetch}
+                tintColor={colors.primary}
+              />
+            }
+          >
             <MaterialIcons name="chat-bubble-outline" size={48} color={colors.secondaryText} />
             <Text style={[styles.emptyText, { color: colors.secondaryText }]}>
               No conversations yet
             </Text>
-          </View>
+          </ScrollView>
         )}
         
         <TouchableOpacity

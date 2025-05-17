@@ -1,11 +1,12 @@
-import { View, Text, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Dimensions, ActivityIndicator, ScrollView } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import { useRegister } from '@/services/hooks/auth';
 import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { FadeIn, FadeInDown, FadeOut, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 import { StatusBar } from 'expo-status-bar';
-import { IconSymbol } from '../../components/ui/IconSymbol';
 import { useColorScheme } from 'nativewind';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableWithoutFeedback, View } from 'react-native';
+import Animated, { FadeIn, FadeInDown, FadeOut, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -180,6 +181,7 @@ export default function Register() {
       formTranslateY.value = withTiming(0, { duration: 250 });
     }
   };
+  const { mutate: register, isPending } = useRegister();
 
   // Form submission
   const handleSubmit = useCallback(async () => {
@@ -230,25 +232,67 @@ export default function Register() {
     try {
       setIsLoading(true);
       
-      // Here you would add your API call to the backend
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulating API call
+      // Call the register API through the hook
+      register(
+        {
+          email: form.email,
+          password: form.password,
+          username: form.username
+        }, 
+        {
+          onSuccess: (data) => {
+            if (data?.error) {
+              // console.error('Registration error:', data?.error);
+              
+              if (Platform.OS === 'android') {
+                ToastAndroid.show('Registration error: ' + data?.message, ToastAndroid.SHORT);
+              }
+              
+              // Set error message if it relates to a specific field
+              if (data?.message?.includes('email')) {
+                setErrors(prev => ({...prev, email: data.message}));
+              } else if (data?.message?.includes('username')) {
+                setErrors(prev => ({...prev, username: data.message}));
+              } else if (data?.message?.includes('password')) {
+                setErrors(prev => ({...prev, password: data.message}));
+              } else {
+                // Generic error
+                setErrors(prev => ({...prev, generic: data.message}));
+              }
+              
+              return;
+            }
+            
+            formScale.value = withTiming(0.95, { duration: 300 });
+            headerOpacity.value = withTiming(0, { duration: 200 });
+            
+            if (Platform.OS === 'android') {
+              ToastAndroid.show('Registration successful! Please verify your OTP.', ToastAndroid.SHORT);
+            }
+            
+            // Navigate to OTP verification page
+            router.push(`/verify-otp?email=${form.email}` as any);
+          },
+          onError: (error) => {
+            console.error('Registration error:', error);
+            if (Platform.OS === 'android') {
+              ToastAndroid.show('Registration error: ' + error.message, ToastAndroid.SHORT);
+            }
+          }
+        }
+      );
       
-      // Handle successful registration
-      formScale.value = withTiming(0.95, { duration: 300 });
-      headerOpacity.value = withTiming(0, { duration: 200 });
-      
-      setTimeout(() => {
-        router.replace('/(tabs)');
-      }, 400);
-      
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
       // Handle registration error
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Registration error: ' + error?.message, ToastAndroid.SHORT);
+      }
     } finally {
       buttonScale.value = withTiming(1, { duration: 100 });
       setIsLoading(false);
     }
-  }, [form, errors, acceptedTerms, buttonScale, formScale, headerOpacity, router]);
+  }, [form, errors, acceptedTerms, buttonScale, formScale, headerOpacity, router, register]);
 
   // Animated styles
   const buttonAnimatedStyle = useAnimatedStyle(() => {
@@ -788,7 +832,7 @@ export default function Register() {
                 ]}
                 entering={FadeInDown.delay(950).duration(700)}
               >
-                {isLoading ? (
+                {isLoading || isPending ? (
                   <ActivityIndicator color="#fff" size="small" />
                 ) : (
                   <Text style={styles.registerButtonText}>Create Account</Text>
