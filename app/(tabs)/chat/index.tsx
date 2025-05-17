@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, TextInput, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, TextInput, StyleSheet, ScrollView } from 'react-native'
 import React from 'react'
 import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -10,12 +10,13 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useColorScheme } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import MaskedView from '@react-native-masked-view/masked-view';
+import { RefreshControl } from 'react-native'
 
 const ChatScreen = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const { mutate: createChat, isPending: isCreatingChat } = useCreateChat();
-  const { data: chatData, isLoading: isLoadingChats } = useGetChats();
+  const { data: chatData, isLoading: isLoadingChats, refetch } = useGetChats();
 
   const handleCreateChat = () => {
     createChat({
@@ -65,7 +66,7 @@ const ChatScreen = () => {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]} className="flex flex-1 h-full">
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <MaskedView
@@ -119,6 +120,13 @@ const ChatScreen = () => {
             renderItem={renderChatItem}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.chatList}
+            refreshControl={
+              <RefreshControl
+                refreshing={isLoadingChats}
+                onRefresh={refetch}
+                tintColor={colors.primary}
+              />
+            }
           />
         ) : (
           <View style={styles.emptyState}>

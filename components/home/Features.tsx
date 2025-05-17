@@ -302,7 +302,7 @@ const Features = () => {
         keyExtractor={(item: any) => item.id}
         contentContainerStyle={[
           styles.listContent,
-          { paddingHorizontal: (windowWidth - CARD_WIDTH) / 2 - CARD_SPACING / 2 }
+          // { paddingHorizontal: (windowWidth - CARD_WIDTH) / 4 - CARD_SPACING / 2 }
         ]}
         snapToInterval={CARD_WIDTH + CARD_SPACING}
         decelerationRate="fast"
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardContainer: {
-    height: 230,
+    height: 200,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
