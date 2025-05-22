@@ -4,6 +4,8 @@ import { useLocalSearchParams } from 'expo-router'
 import ChatInterface from '@/components/chat/ChatInterface';
 import { useChatMessages, useGetChat } from '@/services/hooks/chat';
 import { Colors } from '@/constants/Colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemedView } from '@/components/ThemedView';
 
 const ChatDetail = () => {
   const { chat_id } = useLocalSearchParams();
@@ -19,18 +21,20 @@ const ChatDetail = () => {
     }
 
   return (
-    <View className='flex flex-1'>
-        <ChatInterface 
-            chatId={chat_id as string}
-            initialMessages={messages?.data || []}
-            chat={chat?.data!}
-            onRefresh={() => {
-                refetch()
-                refetchChat()
-            }}
-            refreshing={isPending || isChatPending}
-        />
-    </View>
+    <ThemedView className='flex-1'>
+        <SafeAreaView className='flex flex-1' edges={['bottom']}>
+          <ChatInterface 
+              chatId={chat_id as string}
+              initialMessages={messages?.data || []}
+              chat={chat?.data!}
+              onRefresh={() => {
+                  refetch()
+                  refetchChat()
+              }}
+              refreshing={isPending || isChatPending}
+          />
+      </SafeAreaView>
+    </ThemedView>
   )
 }
 

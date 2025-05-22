@@ -58,6 +58,7 @@ export const useGetChats = (params?: Record<string, any>) => {
     return useQuery({
         queryKey: ['get_chats', params],
         queryFn: () => getChats(params),
+        enabled: false
     })
 }
 

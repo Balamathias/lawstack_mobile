@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, TextInput, StyleSheet, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useCreateChat, useGetChats } from '@/services/hooks/chat'
@@ -20,6 +20,10 @@ const ChatScreen = () => {
   const { data: chatData, isLoading: isLoadingChats, refetch } = useGetChats();
 
   const { data: user, isPending: isLoadingUser } = useUser();
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   const handleCreateChat = () => {
     createChat({
@@ -164,6 +168,7 @@ const ChatScreen = () => {
             style={styles.emptyState} 
             className='flex-1' 
             contentContainerStyle={{ paddingBottom: 20 }}
+            contentContainerClassName='flex-1 items-center justify-center'
             refreshControl={
               <RefreshControl
                 refreshing={isLoadingChats}
@@ -280,8 +285,8 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     height: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   emptyText: {
     marginTop: SPACING.md,

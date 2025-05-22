@@ -5,7 +5,7 @@ import { useColorScheme } from 'nativewind';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Dimensions, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableWithoutFeedback, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, FadeOut, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
 
@@ -324,10 +324,10 @@ export default function Register() {
   const fieldHasError = (field: string) => !!errors[field];
 
   return (
-    <ScrollView
+    <SafeAreaView
       style={[
         styles.container, 
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
+        // { padding },
         { backgroundColor: isDark ? Colors.dark.background : Colors.light.background }
       ]}
       className='h-full'
@@ -857,7 +857,7 @@ export default function Register() {
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 

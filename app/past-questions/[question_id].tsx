@@ -1,17 +1,18 @@
-import React, { useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, useColorScheme, useWindowDimensions, Platform, Share } from 'react-native';
-import { Stack, useLocalSearchParams, router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import React, { useCallback, useRef } from 'react';
+import { Platform, ScrollView, Share, Text, TouchableOpacity, useColorScheme, useWindowDimensions, View } from 'react-native';
 
-import { ThemedView } from '@/components/ThemedView';
-import { useQuestion } from '@/services/hooks/question';
-import MarkdownPreview from '@/components/MarkdownPreview';
-import { Colors } from '@/constants/Colors';
-import Loader from '@/components/Loader';
 import { Question } from '@/@types/db';
+import Loader from '@/components/Loader';
+import MarkdownPreview from '@/components/MarkdownPreview';
+import { ThemedSafeAreaView } from '@/components/ThemedSafeAreaView';
+import { ThemedView } from '@/components/ThemedView';
+import { Colors } from '@/constants/Colors';
+import { useQuestion } from '@/services/hooks/question';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const QuestionDetail = () => {
@@ -113,6 +114,7 @@ const QuestionDetail = () => {
                       fontWeight: '600',
                       color: colors.text,
                       flex: 1,
+                      marginTop: -6
                     }}
                   >
                     {question?.course_name || 'Question Details'}
@@ -366,7 +368,7 @@ const QuestionDetail = () => {
               flex: 1,
               backgroundColor: colors.secondaryBackground,
               paddingVertical: 12,
-              borderRadius: 8,
+              borderRadius: 12,
               alignItems: 'center',
               marginRight: 8,
               borderWidth: 1,
@@ -386,14 +388,14 @@ const QuestionDetail = () => {
               flex: 1,
               backgroundColor: colors.primary,
               paddingVertical: 12,
-              borderRadius: 8,
+              borderRadius: 12,
               alignItems: 'center',
               marginLeft: 8,
             }}
             onPress={() => {
               if (question?.id) {
                 // Navigate to AI chat with this question
-                router.push(`/chat/new?question_id=${question.id}`);
+                // router.push(`/chat/new?question_id=${question.id}`);
               }
             }}
           >

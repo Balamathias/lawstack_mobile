@@ -112,18 +112,18 @@ export function WelcomeSection({
       </View>
 
       <View style={styles.cardContainer}>
-        <View style={[styles.infoCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <TouchableOpacity activeOpacity={0.6} onPress={() => router.push('/courses')} style={[styles.infoCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={[styles.iconContainer, { backgroundColor: `${colors.primary}20` }]}>
             <MaterialIcons name="assignment" size={24} color={colors.primary} />
           </View>
           <View style={styles.cardContent}>
-            <Text style={[styles.cardTitle, { color: colors.text }]}>Study Plans</Text>
+            <Text style={[styles.cardTitle, { color: colors.text }]}>Study Plan</Text>
             <Text style={[styles.cardDescription, { color: colors.secondaryText }]}>
-              Create and manage your study schedule
+              Start your personalized study plan today.
             </Text>
           </View>
           <MaterialIcons name="chevron-right" size={24} color={colors.secondaryText} />
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -112,6 +112,7 @@ const markdownStyles = StyleSheet.create({
         borderColor: colors.border,
         color: colors.text,
         overflow: 'scroll',
+        
     },
     fence: {
         fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',

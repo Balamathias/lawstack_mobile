@@ -472,7 +472,7 @@ const ChatInput = memo(({
                             styles.headerContainer, 
                             { backgroundColor: isDark ? Colors.dark.background : Colors.light.background }
                         ]}>
-                            <SafeAreaView style={styles.headerContent} edges={['top', 'left', 'right']} className='w-full'>
+                            <SafeAreaView style={styles.headerContent} edges={['top', 'left', 'right']}>
                                 {/* Left: Back button with gradient */}
                                 <View className="flex flex-row items-center gap-2">
                                     <TouchableOpacity 
@@ -502,22 +502,8 @@ const ChatInput = memo(({
                                     <Text className="font-semibold text-xl dark:text-white">lawstack</Text>
                                 </View>
 
-                                {/* Middle: Chat title (truncated) */}
-                                {/* <View style={styles.titleContainer}>
-                                    <Text 
-                                        numberOfLines={1} 
-                                        ellipsizeMode="tail"
-                                        style={[
-                                            styles.headerTitle,
-                                            { color: isDark ? Colors.dark.text : Colors.light.text }
-                                        ]}
-                                    >
-                                        {chat?.title || 'New Chat'}
-                                    </Text>
-                                </View> */}
-
                                 {/* Right: New chat icon */}
-                                <View className="flex flex-row items-center gap-x-3">
+                                <View className="flex flex-row items-center gap-x-2.5 ">
 
                                     <TouchableOpacity 
                                         style={styles.newChatButton}
@@ -1749,11 +1735,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%'
-        // alignItems: 'center',
     },
     headerContent: {
         flexDirection: 'row',
-        alignItems: 'center',
+        // alignItems: 'center',
+        width: '100%',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
         height: 44,

@@ -1,13 +1,13 @@
-import { View, Text, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Dimensions, ActivityIndicator, ScrollView, ToastAndroid } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { FadeIn, FadeInDown, FadeOut, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
-import { StatusBar } from 'expo-status-bar';
-import { IconSymbol } from '../../components/ui/IconSymbol';
-import { useColorScheme } from 'nativewind';
-import { Colors } from '../../constants/Colors';
 import { useLogin } from '@/services/hooks/auth';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useColorScheme } from 'nativewind';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableWithoutFeedback, View } from 'react-native';
+import Animated, { FadeIn, FadeInDown, FadeOut, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { IconSymbol } from '../../components/ui/IconSymbol';
+import { Colors } from '../../constants/Colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const { width, height } = Dimensions.get('window');
@@ -199,10 +199,10 @@ const Login = () => {
   };
   
   return (
-    <ScrollView
+    <SafeAreaView
       style={[
         styles.container, 
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
+        // { paddingTop: insets.top, paddingBottom: insets.bottom },
         { backgroundColor: isDark ? Colors.dark.background : Colors.light.background }
       ]}
       className='h-full'
@@ -425,7 +425,7 @@ const Login = () => {
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 

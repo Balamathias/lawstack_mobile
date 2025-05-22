@@ -741,7 +741,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     marginRight: SPACING.sm,
-    height: 36,
+    // height: 36,
   },
   filterCheckIcon: {
     marginRight: 4,

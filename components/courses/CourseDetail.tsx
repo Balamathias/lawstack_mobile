@@ -1,33 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity,
-  ActivityIndicator,
-  useWindowDimensions
-} from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useColorScheme } from 'nativewind';
-import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import { SPACING } from '@/constants/Spacing';
+import { useUser } from '@/services/hooks/auth';
+import { useCreateChat } from '@/services/hooks/chat';
+import { useCourse } from '@/services/hooks/courses';
+import { useQuestions } from '@/services/hooks/question';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { 
-  FadeIn, 
-  FadeInDown, 
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useColorScheme } from 'nativewind';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View
+} from 'react-native';
+import Animated, {
+  FadeIn,
+  FadeInDown,
   SlideInRight,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming
 } from 'react-native-reanimated';
-import { useCourse } from '@/services/hooks/courses';
-import { useUser } from '@/services/hooks/auth';
-import { useCreateChat } from '@/services/hooks/chat';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Loader from '../Loader';
 
 const CourseDetail = () => {
@@ -39,31 +41,29 @@ const CourseDetail = () => {
   const isDark = colorScheme === 'dark';
   const colors = Colors[isDark ? 'dark' : 'light'];
   
-  // Course data fetching
   const { data: courseData, isLoading: courseLoading } = useCourse(course_id as string);
   const { data: userData } = useUser();
   const { mutate: createChat, isPending: isCreatingChat } = useCreateChat();
-  
-  // Animation values
+  const { data: questionsData, isPending: questionsLoading } = useQuestions({
+    params: {course: course_id as string, page_size: 10}
+  });
+
   const headerOpacity = useSharedValue(0);
   const descriptionHeight = useSharedValue(80);
   const isDescriptionExpanded = useSharedValue(false);
   const [expanded, setExpanded] = useState(false);
   
-  // Extract course data
   const course = courseData?.data;
+  const questions = questionsData?.data;
   
   useEffect(() => {
-    // Animate header on load
     headerOpacity.value = withTiming(1, { duration: 500 });
   }, []);
   
-  // Handle back button
   const handleBack = () => {
     router.back();
   };
   
-  // Handle description toggle
   const toggleDescription = () => {
     setExpanded(!expanded);
     isDescriptionExpanded.value = !isDescriptionExpanded.value;
@@ -73,12 +73,11 @@ const CourseDetail = () => {
     );
   };
   
-  // Start a course-related chat
   const handleStartChat = () => {
     if (!course) return;
     
     createChat({
-      title: `Chat about ${course.name}`,
+      title: `New Chat`,
       chat_type: 'course_specific',
       course_id: course.id
     }, {
@@ -93,13 +92,11 @@ const CourseDetail = () => {
     });
   };
   
-  // Start a quiz for this course
   const handleStartQuiz = () => {
     if (!course) return;
-    router.push(`/quiz?course_id=${course.id}` as any);
+    router.push(`/quizzes?course_id=${course.id}` as any);
   };
   
-  // Animated styles
   const headerStyle = useAnimatedStyle(() => ({
     opacity: headerOpacity.value
   }));
@@ -108,14 +105,12 @@ const CourseDetail = () => {
     height: descriptionHeight.value
   }));
 
-  // Loading state
-  if (courseLoading) {
+  if (courseLoading || questionsLoading) {
     return (
       <Loader />
     );
   }
   
-  // Error state
   if (!course) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -144,7 +139,6 @@ const CourseDetail = () => {
     );
   }
 
-  // Determine level styles and colors
   const getLevelColors = () => {
     const levelNum = typeof course.level === 'string' 
       ? parseInt(course.level.toString().replace(/\D/g, ''), 10) 
@@ -173,62 +167,58 @@ const CourseDetail = () => {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       
-      {/* Animated header */}
-      <Animated.View 
-        style={[
-          styles.header, 
-          { 
-            paddingTop: insets.top,
-            backgroundColor: colors.background 
-          },
-          headerStyle
-        ]}
-      >
-        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <MaterialIcons name="arrow-back" size={24} color={colors.text} />
-        </TouchableOpacity>
-        
-        <Text 
-          style={[styles.headerTitle, { color: colors.text }]}
-          numberOfLines={1}
-        >
-          {course.code}
-        </Text>
-        
-        <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.headerButton}>
-            <MaterialIcons name="more-vert" size={24} color={colors.text} />
-          </TouchableOpacity>
-        </View>
-      </Animated.View>
+      <Stack.Screen 
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: colors.background },
+          header: () => (
+            <Animated.View 
+              style={[
+                styles.header, 
+                { 
+                  paddingTop: insets.top,
+                  backgroundColor: colors.background 
+                },
+                headerStyle
+              ]}
+            >
+              <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                <MaterialIcons name="arrow-back" size={24} color={colors.text} />
+              </TouchableOpacity>
+              
+              <Text 
+                style={[styles.headerTitle, { color: colors.text }]}
+                numberOfLines={1}
+              >
+                {course.code}
+              </Text>
+              
+              <View style={styles.headerRight}>
+                <TouchableOpacity style={styles.headerButton}>
+                  <MaterialIcons name="more-vert" size={24} color={colors.text} />
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+          )
+        }}
+      />
       
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Course info card */}
         <Animated.View 
           entering={FadeInDown.duration(500).delay(200)}
           style={[
             styles.card, 
             { 
-              // backgroundColor: isDark ? colors.card : colors.card,
-              // borderColor: `${colors.border}80`
             }
           ]}
         >
           {/* Decorative elements */}
           <View style={[styles.cardDecoration1, { backgroundColor: `${levelColors[0]}0D` }]} />
           <View style={[styles.cardDecoration2, { backgroundColor: `${levelColors[1]}0D` }]} />
-          
-          {/* Top border */}
-          {/* <LinearGradient
-            colors={levelColors as any}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.cardBorder}
-          /> */}
           
           <View style={styles.courseCodeContainer}>
             <Animated.View 
@@ -331,10 +321,10 @@ const CourseDetail = () => {
 
           </Animated.View>
 
-          {/* Action buttons */}
           <Animated.View
             entering={FadeIn.duration(500).delay(800)}
             style={styles.actionButtons}
+            className={'absolute bottom-0 left-0 right-0 hidden'}
           >
             <TouchableOpacity
               style={[styles.actionButton, styles.PQButton]}
@@ -392,13 +382,81 @@ const CourseDetail = () => {
           </Animated.View>
         </Animated.View>
         
-        {/* Past questions section */}
-        {/* <Animated.View
-          entering={FadeInDown.duration(500).delay(1000)}
+        {/* Questions section */}
+
+        <Animated.View
+          entering={FadeIn.duration(500).delay(1000)}
           style={styles.questionsSection}
-        > 
-          <CourseQuestions courseId={course.id} />
-        </Animated.View> */}
+          className={'mt-8'}
+        >
+            <View className="mb-4">
+              <View className="flex-row items-center justify-between mb-2">
+                <Text className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Questions
+                </Text>
+                <TouchableOpacity 
+                onPress={() => router.push(`/past-questions?course_id=${course.id}` as any)}
+                className="flex-row items-center"
+                >
+                <Text className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 mr-1">
+                  See All
+                </Text>
+                <MaterialIcons name="chevron-right" size={18} color={colors.primary} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+          <FlatList
+            data={questions}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity 
+                style={{ width: width - SPACING.xxl * 2 }} 
+                className="mr-4"
+                activeOpacity={0.8}
+                onPress={() => {
+                  router.push(`/past-questions/${item.id}` as any);
+                }}
+              >
+                <View className="bg-white dark:bg-[#222] p-4 rounded-2xl shadow-lg">
+                  <Text
+                    className="text-gray-900 dark:text-gray-100 text-base leading-relaxed"
+                    numberOfLines={5}
+                  >
+                    {item.text_plain}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={() => (
+              <View style={styles.comingSoonContainer}>
+                <MaterialIcons name="hourglass-empty" size={64} color={colors.primary} />
+                <Text style={[styles.comingSoonTitle, { color: colors.text }]}>
+                  Coming Soon
+                </Text>
+                <Text style={[styles.comingSoonText, { color: colors.secondaryText }]}>
+                  No questions available for this course yet.
+                  Check back later for updates.
+                </Text>
+              </View>
+            )}
+            contentContainerStyle={{
+              padding: SPACING.lg,
+              paddingBottom: SPACING.xxl * 2,
+            }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={width - SPACING.xxl * 2}
+            snapToAlignment="start"
+            decelerationRate="fast"
+            bounces={false}
+            style={{
+              paddingTop: SPACING.xxl,
+              paddingBottom: SPACING.xxl * 2,
+            }}
+          />
+        </Animated.View>
+
       </ScrollView>
     </View>
   );

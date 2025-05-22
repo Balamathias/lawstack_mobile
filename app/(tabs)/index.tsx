@@ -129,15 +129,6 @@ export default function HomeScreen() {
 
           <Features />
         </View>
-
-        {/* <View style={styles.gradientBackground}>
-          <LinearGradient
-            colors={[`${colors.primary}10`, 'transparent']}
-            style={styles.backgroundGradient}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-          />
-        </View> */}
       </ScrollView>
     </View>
   );
